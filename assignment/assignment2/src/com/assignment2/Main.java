@@ -73,7 +73,12 @@ public class Main{
 
                     ArrayList<String> courses = new ArrayList<>();
                     courses.addAll(Arrays.asList(temp.split(",")));
-
+                    
+                    if(courses.size() > 6){
+                        System.out.println("max 6 courses are allowed!,enter again");
+                        courses.clear();
+                        courses.addAll(Arrays.asList(temp.split(",")));
+                    }
                     if(courses.size() < 4){
                         System.out.println("enter more courses ,minimum 4 courses required!");
                         temp = sc.nextLine();
