@@ -1,16 +1,11 @@
 package com.assignment2;
 
+import java.io.*;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.io.Serializable;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.File;
 import java.lang.reflect.Field;
 
 class SortedUser implements Comparator<String> , Serializable{
@@ -29,19 +24,25 @@ class Data implements Serializable{
 }
 
 public class Main{
+
+    static Data readObject(){
+
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File("userData.txt")));
+            Data data = (Data)in.readObject();
+            in.close();
+            return data;
+        } catch (IOException | ClassNotFoundException  e) {
+            return new Data();
+        }
+
+    }
+
     public static void main(String[] args){
 
         int choice = 0;
         Scanner sc = new Scanner(System.in);
-        Data data = null;
-
-        try{
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File("userData.txt")));
-            data = (Data)in.readObject();
-            in.close();
-        }catch (Exception ex) {
-            if(data == null) data = new Data();
-        }
+        Data data = readObject();
 
         while(choice != 5){
 
@@ -50,6 +51,7 @@ public class Main{
             System.out.println("3 -> delete user details");
             System.out.println("4 -> save user details");
             System.out.println("5 -> exit");
+
             choice = Integer.parseInt(sc.nextLine());
 
             if(choice == 1){
@@ -73,11 +75,11 @@ public class Main{
 
                     ArrayList<String> courses = new ArrayList<>();
                     courses.addAll(Arrays.asList(temp.split(",")));
-                    
+
                     if(courses.size() > 6){
                         System.out.println("max 6 courses are allowed!,enter again");
                         courses.clear();
-                        courses.addAll(Arrays.asList(temp.split(",")));
+                        courses.addAll(Arrays.asList(sc.nextLine().split(",")));
                     }
                     if(courses.size() < 4){
                         System.out.println("enter more courses ,minimum 4 courses required!");
@@ -91,9 +93,11 @@ public class Main{
                         System.out.println("student already exists! replace(y/n)");
                         if(sc.nextLine().equals("y")){
                             data.users.put(name + "," + Integer.toString(rollno),u);
+                            System.out.println("user added!");
                         }
                     }else{
                         data.users.put(name + "," + Integer.toString(rollno),u);
+                        System.out.println("user added!");
                     }
 
                 }catch(Exception e){
@@ -104,6 +108,9 @@ public class Main{
             }else if(choice == 2){
 
                 try{
+
+                    data = readObject();
+
                     System.out.println("enter criteria(name,address,rollno,age)");
                     String response = sc.nextLine();
 
@@ -122,7 +129,7 @@ public class Main{
                         }
                     }
 
-                    System.out.println("name  rollno  age  address  courses");
+                    System.out.println("name rollno age address courses");
                     for(User u : allUsers.values()){
                         System.out.println(u.name + " " + u.rollno + " " + u.age + " " + u.address + " " + u.courses.toString());
                     }
@@ -133,7 +140,7 @@ public class Main{
             }else if(choice == 3){
                 try{
                     System.out.println("enter rollno");
-                    int rollno = sc.nextInt();
+                    int rollno = Integer.parseInt(sc.nextLine());
 
                     String key = "";
                     for(String k : data.users.keySet()){
@@ -142,7 +149,13 @@ public class Main{
                             break;
                         }
                     }
-                    if(key != "")data.users.remove(key);
+                    if(key != ""){
+                        data.users.remove(key);
+                        System.out.println("user deleted!");
+                    }
+                    else{
+                        System.out.println("user not found!");
+                    }
                 }catch(Exception e){
                     System.out.println("cannot delete user!");
                 }
