@@ -63,7 +63,7 @@ public class Parallel  implements Runnable{
         }else{
             try {
                 while(!checkItem()){
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 }
 
                 for(Item i:items){
